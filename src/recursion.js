@@ -156,11 +156,50 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
+  if (y === 0) {
+    return NaN;
+  }
+  if (x === 0) {
+    return 0;
+  }
+
+  if (y < 0) {
+    y = -y;
+  }
+
+  if (x > 0) {
+    if (x < y) {
+      return x;
+    } else {
+      return modulo(x - y, y);
+    }
+  } else {
+    if (-x < y) {
+      return x;
+    } else {
+      return  modulo(x + y, y);
+    }
+  }
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
 // Math methods.
 var multiply = function(x, y) {
+  if (y === 0) {
+    return 0;
+  }
+  if (y === 1) {
+    return x;
+  }
+  if (y === -1) {
+    return -x;
+  }
+  if (y > 1) {
+    return x + multiply(x, y - 1);
+  }
+  if (y < -1) {
+    return -x + multiply(x, y + 1);
+  }
 };
 
 // 13. Write a function that divides two numbers without using the / operator or
@@ -222,18 +261,58 @@ var rMap = function(array, callback) {
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
 var countKeysInObj = function(obj, key) {
+  var count = 0;
+
+  for (var k in obj) {
+    if (k === key) {
+      count++;
+    }
+    if (typeof obj[k] === 'object' && !(Array.isArray(obj[k]))) {
+      count += countKeysInObj(obj[k], key);
+    } else {
+      return count;
+    }
+  }
+  return count;
 };
+
 
 // 23. Write a function that counts the number of times a value occurs in an object.
 // var obj = {'e':{'x':'y'},'t':{'r':{'e':'r'},'p':{'y':'r'}},'y':'e'};
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+  var count = 0;
+
+  for (var k in obj) {
+    var v = obj[k];
+    if (v === value) {
+      count++;
+    }
+    if (typeof v === 'object' && !(Array.isArray(v))) {
+      count += countValuesInObj(v, value);
+    } else {
+      return count
+    }
+  }
+
+  return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
 var replaceKeysInObj = function(obj, oldKey, newKey) {
+  for (var k in obj) {
+    if (typeof obj[k] === 'object' && !(Array.isArray(obj[k]))) {
+      replaceKeysInObj(obj[k], oldKey, newKey);
+    }
+
+    if (k === oldKey) {
+      obj[newKey] = obj[oldKey];
+      delete obj[oldKey];
+    }
+  }
+  return obj;
 };
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
